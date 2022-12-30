@@ -29,4 +29,4 @@ $user - объект обновленного пользователя, $profile
 
 --------------------
 Feel free to suggest ideas/improvements/bugs on GitHub:
-http://github.com/bezumkin/AjaxForm/issues
+https://github.com/ShevArtV/ajaxformitlogin/issues
