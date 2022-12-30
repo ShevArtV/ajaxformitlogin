@@ -8,7 +8,3 @@ if (aflConfigs.length) {
         window.aflForms[config.formSelector] = new AjaxFormitLogin('.' + config.formSelector, config);
     });
 }
-
-document.addEventListener('afl_complete', e => {
-    console.log(e.detail);
-});

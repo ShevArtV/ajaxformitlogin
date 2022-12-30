@@ -15,6 +15,12 @@ Simple component for MODX Revolution, that allows you to send any form through a
 отдельно при неудачной отправке.
 5. Позволяет отображать процесс загрузки файлов на сервер, для этого нужно указать параметр showUplodedProgress со значением 1.
 6. Событие af_complete заменено на afl_complete.
+<code>
+document.addEventListener('afl_complete', e => {
+    console.log(e.detail.response); // ответ сервера
+    console.log(e.detail.form); // текущая форма
+});
+</code>
 7. Изменен формат ответа сервера.
 8. Работают редиректы. Для этого необходимо указать параметр redirectTo (абсолютная ссылка или ID ресурса) и, при необходимости изменить стандартное значение в 2с,
 redirectTimeout (в милисекундах) для задания задержки перед переходом на другую страницу.
