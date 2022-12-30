@@ -1,5 +1,5 @@
 <?php
-
+// php7.4 public_html/_build/build.php
 if (!defined('MODX_CORE_PATH')) {
     $path = dirname(__FILE__);
     while (!file_exists($path . '/core/config/config.inc.php') && (strlen($path) > 1)) {
@@ -11,7 +11,7 @@ if (!defined('MODX_CORE_PATH')) {
 return [
     'name' => 'AjaxFormitLogin',
     'name_lower' => 'ajaxformitlogin',
-    'version' => '1.0.0',
+    'version' => '1.0.1',
     'release' => 'pl',
     // Install package to site right after build
     'install' => false,

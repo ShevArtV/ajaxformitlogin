@@ -40,7 +40,7 @@ $config = $AjaxFormitLogin->config;
 $config['pageId'] = $modx->resource->id;
 $frontConfigFields = [
     'formSelector',
-    'showUplodedProgress',
+    'showUploadProgress',
     'fileUplodedProgressMsg',
     'fileUplodedSuccessMsg',
     'fileUplodedErrorMsg',

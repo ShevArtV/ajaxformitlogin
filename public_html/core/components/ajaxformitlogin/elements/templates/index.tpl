@@ -23,7 +23,7 @@
     'test1' => 'It is test params One',
     'test2' => 123,
     'test3' => 'is error',
-    'showUplodedProgress' => 1,
+    'showUploadProgress' => 1,
     'spamProtection' => 1,
 
     'validate' => 'email:required:email,name:required:minLength=^3^,phone:required,politics:minValue=^1^',

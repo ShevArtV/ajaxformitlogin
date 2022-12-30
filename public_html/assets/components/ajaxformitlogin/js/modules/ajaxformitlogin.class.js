@@ -14,7 +14,7 @@ export default class AjaxForm {
             fileUplodedSuccessMsg: '',
             fileUplodedErrorMsg: '',
             ajaxErrorMsg: '',
-            showUplodedProgress: false,
+            showUplodProgress: false,
             addons: ['Notify'],
             notifyClassPath: './aflnotify.class.js',
             notifyClassName: 'AflNotify',
@@ -176,7 +176,7 @@ export default class AjaxForm {
         request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         request.responseType = 'json';
 
-        if (form.querySelector('input[type="file"]')?.value && this.config.showUplodedProgress) {
+        if (form.querySelector('input[type="file"]')?.value && this.config.showUploadProgress) {
             request.upload.onprogress = function (e) {
                 $this.onUploadProgress(e, form);
             };
