@@ -1,0 +1,8 @@
+1.0.0-pl
+==============
+- First stable build.
+
+
+1.0.0-beta
+==============
+- Initial release.
