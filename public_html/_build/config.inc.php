@@ -11,7 +11,7 @@ if (!defined('MODX_CORE_PATH')) {
 return [
     'name' => 'AjaxFormitLogin',
     'name_lower' => 'ajaxformitlogin',
-    'version' => '1.0.1',
+    'version' => '1.0.2',
     'release' => 'pl',
     // Install package to site right after build
     'install' => false,
