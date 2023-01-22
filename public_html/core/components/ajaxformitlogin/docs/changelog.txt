@@ -1,3 +1,23 @@
+1.0.6-pl
+==============
+- Added the ability to display validation errors without changing the layout
+
+1.0.5-pl
+==============
+- Fix bugs
+- Added automatic sending of goals to yandex
+- Added JS event afl_init
+
+1.0.3-pl
+==============
+- Added default parameters for the AjaxFormItLogin snippet
+- Added auto-loading of pdoTools and FormIt
+- Renamed some snippets and chunks
+
+1.0.2-pl
+==============
+- Fixed the error of creating system settings.
+
 1.0.1-pl
 ==============
 - Fixed a typo in the parameter.

@@ -7,4 +7,10 @@ if (aflConfigs.length) {
         let config = JSON.parse(el.value);
         window.aflForms[config.formSelector] = new AjaxFormitLogin('.' + config.formSelector, config);
     });
+    const initEvent = new CustomEvent('afl_init', {
+        cancelable: false,
+        bubbles: true,
+        detail: {},
+    });
+    document.dispatchEvent(initEvent);
 }

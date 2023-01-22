@@ -11,7 +11,7 @@ if (!defined('MODX_CORE_PATH')) {
 return [
     'name' => 'AjaxFormitLogin',
     'name_lower' => 'ajaxformitlogin',
-    'version' => '1.0.2',
+    'version' => '1.0.6',
     'release' => 'pl',
     // Install package to site right after build
     'install' => false,
@@ -32,8 +32,8 @@ return [
     // Which elements should be static by default
     'static' => [
         'plugins' => false,
-        'snippets' => true,
-        'chunks' => true,
+        'snippets' => false,
+        'chunks' => false,
     ],
     // Log settings
     'log_level' => !empty($_REQUEST['download']) ? 0 : 3,

@@ -30,17 +30,17 @@ class AjaxFormitLogin
             'formSelector' => 'afl_form',
             'json_response' => true,
 
-            'fileUplodedProgressMsg' => $this->modx->lexicon('afl_message_uploded_progress'),
-            'fileUplodedSuccessMsg' => $this->modx->lexicon('afl_message_uploded_success'),
-            'fileUplodedErrorMsg' => $this->modx->lexicon('afl_message_uploded_error'),
-            'ajaxErrorMsg' => $this->modx->lexicon('afl_message_ajax_error'),
+            'fileUplodedProgressMsg' => $this->modx->lexicon('ajaxformitlogin_message_uploded_progress'),
+            'fileUplodedSuccessMsg' => $this->modx->lexicon('ajaxformitlogin_message_uploded_success'),
+            'fileUplodedErrorMsg' => $this->modx->lexicon('ajaxformitlogin_message_uploded_error'),
+            'ajaxErrorMsg' => $this->modx->lexicon('ajaxformitlogin_message_ajax_error'),
 
 
 
-            'notifySettingsPath' => $this->modx->getOption('afl_notify_js', '', 'assets/components/ajaxformitlogin/js/message_settings.json'),
-            'frontend_js' => $this->modx->getOption('afl_frontend_js', '', '[[+assetsUrl]]js/default.js'),
-            'notifyClassPath' => $this->modx->getOption('afl_notify_classpath', '', './aflizitoast.class.js'),
-            'notifyClassName' => $this->modx->getOption('afl_notify_classname', '', 'AflIziToast'),
+            'notifySettingsPath' => $this->modx->getOption('ajaxformitlogin_notify_js', '', 'assets/components/ajaxformitlogin/js/message_settings.json'),
+            'frontend_js' => $this->modx->getOption('ajaxformitlogin_frontend_js', '', '[[+assetsUrl]]js/default.js'),
+            'notifyClassPath' => $this->modx->getOption('ajaxformitlogin_notify_classpath', '', './aflizitoast.class.js'),
+            'notifyClassName' => $this->modx->getOption('ajaxformitlogin_notify_classname', '', 'AflIziToast'),
         ), $config);
 
         $this->config['formSelector'] = $this->config['formSelector'] . '_' . rand();
@@ -91,7 +91,7 @@ class AjaxFormitLogin
     public function process($action, array $fields = array())
     {
         if (!isset($_SESSION['AjaxFormitLogin'][$action])) {
-            return $this->error('afl_err_action_nf');
+            return $this->error('ajaxformitlogin_err_action_nf');
         }
         unset($fields['afl_action'], $_POST['afl_action'], $fields['afl_config']);
 
@@ -130,7 +130,7 @@ class AjaxFormitLogin
             }
             return $response;
         } else {
-            return $this->error('afl_err_snippet_nf', array(), array('name' => $name));
+            return $this->error('ajaxformitlogin_err_snippet_nf', array(), array('name' => $name));
         }
     }
 
@@ -153,11 +153,11 @@ class AjaxFormitLogin
             }
         }
         if (isset($scriptProperties['transmittedParams'])) {
-            $transmitted = json_decode($scriptProperties['transmittedParams'], 1);
+            $transmitted = !is_array($scriptProperties['transmittedParams']) ? json_decode($scriptProperties['transmittedParams'], 1) : $scriptProperties['transmittedParams'];
         }
 
         if (!empty($data['errors'])) {
-            $message = $scriptProperties['validationErrorMessage'] ?? 'afl_err_has_errors';
+            $message = $scriptProperties['validationErrorMessage'] ?? 'ajaxformitlogin_err_has_errors';
             $status = 'error';
             if (isset($transmitted['error'])) {
                 $keys = explode(',', $transmitted['error']);
@@ -166,7 +166,7 @@ class AjaxFormitLogin
                 }
             }
         } else {
-            $message = $scriptProperties['successMessage'] ?? 'afl_success_submit';
+            $message = $scriptProperties['successMessage'] ?? 'ajaxformitlogin_success_submit';
             $status = 'success';
             if (isset($transmitted['success'])) {
                 $keys = explode(',', $transmitted['success']);

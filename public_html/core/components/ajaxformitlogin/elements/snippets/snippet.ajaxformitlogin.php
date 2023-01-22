@@ -1,4 +1,5 @@
 <?php
+
 /** @var array $scriptProperties */
 /** @var AjaxFormitLogin $AjaxFormitLogin */
 if (!$modx->loadClass('ajaxformitlogin', MODX_CORE_PATH . 'components/ajaxformitlogin/model/ajaxformitlogin/', false, true)) {
@@ -33,11 +34,13 @@ if(!function_exists('generateRandString')){
     }
 }
 
-
 $scriptProperties['secret'] = generateRandString($modx);
+$scriptProperties['secret.vTextContains'] = $scriptProperties['secret.vTextContains'] ?: 'Кажется Вы робот. Если это не так, обновите страницу.';
 $AjaxFormitLogin = new AjaxFormitLogin($modx, $scriptProperties);
 $config = $AjaxFormitLogin->config;
 $config['pageId'] = $modx->resource->id;
+$config['metrics'] = $modx->getOption('ajaxformitlogin_metrics' , null, '');
+$config['counterId'] = $modx->getOption('ajaxformitlogin_counter_id' , null, '');
 $frontConfigFields = [
     'formSelector',
     'showUploadProgress',
@@ -52,15 +55,18 @@ $frontConfigFields = [
     'notifySettingsPath',
     'notifyClassName',
     'notifyClassPath',
-    'spamProtection'
+    'spamProtection',
+    'metrics',
+    'counterId'
 ];
 
 $assetsUrl = $modx->getOption('ajaxformitlogin_assets_url', $config, $modx->getOption('assets_url') . 'components/ajaxformitlogin/');
 $parsedConfig = str_replace('[[+assetsUrl]]',$assetsUrl, $config);
 $snippet = $modx->getOption('snippet', $config, 'FormIt', true);
-$tpl = $modx->getOption('form', $config, 'tpl.AjaxForm.example', true);
+$tpl = $modx->getOption('form', $config, 'aflExampleForm', true);
 $formSelector = $modx->getOption('formSelector', $config, 'afl_form', true);
 $objectName = $modx->getOption('objectName', $config, 'AjaxFormitLogin', true);
+
 $frontendConfig = array();
 foreach($parsedConfig as $k => $v){
     if(in_array($k, $frontConfigFields)){
@@ -75,7 +81,7 @@ if (class_exists('pdoTools') && $pdo = $modx->getService('pdoTools')) {
     $content = $modx->parseChunk($tpl, $config);
 }
 if (empty($content)) {
-    return $modx->lexicon('afl_err_chunk_nf', array('name' => $tpl));
+    return $modx->lexicon('ajaxformitlogin_err_chunk_nf', array('name' => $tpl));
 }
 
 // Add selector to tag form

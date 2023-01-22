@@ -1,39 +1,39 @@
 <?php
 
 return [
-    'activateEmail' => [
+    'aflActivateEmail' => [
         'file' => 'emails/activateEmail',
         'description' => 'пример чанка письма со ссылкой на активацию',
     ],
-    'exampleEmail' => [
+    'aflExampleEmail' => [
         'file' => 'emails/exampleEmail',
         'description' => 'пример чанка письма',
     ],
-    'exampleForm' => [
+    'aflExampleForm' => [
         'file' => 'forms/exampleForm',
         'description' => 'пример чанка формы',
     ],
-    'forgotForm' => [
+    'aflForgotForm' => [
         'file' => 'forms/forgotForm',
         'description' => 'пример чанка формы восстановления пароля',
     ],
-    'loginForm' => [
+    'aflLoginForm' => [
         'file' => 'forms/loginForm',
         'description' => 'пример чанка формы авторизации',
     ],
-    'logoutForm' => [
+    'aflLogoutForm' => [
         'file' => 'forms/logoutForm',
         'description' => 'пример чанка формы выхода из аккаунта',
     ],
-    'registerForm' => [
+    'aflRegisterForm' => [
         'file' => 'forms/registerForm',
         'description' => 'пример чанка формы регистрации',
     ],
-    'updatePassForm' => [
+    'aflUpdatePassForm' => [
         'file' => 'forms/updatePassForm',
         'description' => 'пример чанка формы изменения пароля',
     ],
-    'updateProfileForm' => [
+    'aflUpdateProfileForm' => [
         'file' => 'forms/updateProfileForm',
         'description' => 'пример чанка формы редактирования личных данных',
     ],

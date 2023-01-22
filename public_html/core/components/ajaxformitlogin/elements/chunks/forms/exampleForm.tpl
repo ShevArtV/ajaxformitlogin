@@ -1,8 +1,7 @@
-<form>
+<form id="aflExampleForm">
     <div class="mb-3">
         <label class="form-label">Ваше имя</label>
         <input type="text" class="form-control" name="name" placeholder="Иван Иванович">
-        <small class="text-danger d-block error_name"></small>
     </div>
     <div class="mb-3">
         <label class="form-label">Телефон</label>

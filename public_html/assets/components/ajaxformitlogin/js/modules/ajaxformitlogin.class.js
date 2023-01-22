@@ -1,4 +1,4 @@
-export default class AjaxForm {
+export default class AjaxFormitLogin {
     constructor(selector, config) {
         this.form = document.querySelector(selector);
         if (!this.form) {
@@ -151,12 +151,13 @@ export default class AjaxForm {
             form = elem.closest('form');
         elem.classList.remove('error');
         if (elem.name && form.length) {
-            console.log(elem.name);
             let requiredCheckbox = form.querySelector('[data-required="' + elem.name + '"]');
             if (requiredCheckbox) {
                 elem.value = 0;
             }
-            form.querySelector('.error_' + elem.name).innerHTML = '';
+            if(form.querySelector('.error_' + elem.name)){
+                form.querySelector('.error_' + elem.name).innerHTML = '';
+            }
         }
     }
 
@@ -229,6 +230,11 @@ export default class AjaxForm {
             this.Notify.success(response.message);
         }
 
+        if(response.data.ym_goal && this.config.metrics && this.config.counterId && typeof window.ym !== 'undefined'){
+            const addData = form.id || this.config.pageId;
+            ym(this.config.counterId, 'reachGoal', response.data.ym_goal, {'form' : addData});
+        }
+
         if (response.data.redirectUrl) {
             setTimeout(() => {
                 window.location.href = response.data.redirectUrl;
@@ -247,6 +253,14 @@ export default class AjaxForm {
 
     // handler server error response
     onError(response, form) {
+        const aliases = {};
+        if(response.data.aliases){
+            let tmp = response.data.aliases.split(',');
+            for(let k in tmp) {
+                let kv = tmp[k].split('==');
+                aliases[kv[0]] = kv[1];
+            };
+        }
         if (response.data.errors) {
             let key, value, focused;
             for (key in response.data.errors) {
@@ -261,6 +275,14 @@ export default class AjaxForm {
                         if (span) {
                             span.innerHTML = value;
                             span.classList.add('error');
+                        }else{
+                            if (this.Notify !== undefined) {
+                                if(aliases[key]){
+                                    this.Notify.error(aliases[key] +': '+ response.data.errors[key]);
+                                }else{
+                                    this.Notify.error(key + ': ' + response.data.errors[key]);
+                                }
+                            }
                         }
 
                         form.querySelector('[name="' + key + '"]').classList.add('error');

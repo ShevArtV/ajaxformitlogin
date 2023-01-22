@@ -5,7 +5,8 @@
     "cssPath": "assets/components/ajaxformitlogin/css/lib/izitoast/iziToast.min.css",
     "handlerClassName": "iziToast",
     "handlerOptions": {
-      "timeout": 1500
+      "timeout": 2500,
+      "position": "topCenter"
     }
   }
 }
