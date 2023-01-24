@@ -1,3 +1,8 @@
+1.0.7-pl
+==============
+- Code of the ActivateUser snippet has been moved to the class ajaxidentification.class.php
+- Added initialization of the OnUserActivate event.
+
 1.0.6-pl
 ==============
 - Added the ability to display validation errors without changing the layout
