@@ -28,10 +28,10 @@ class AjaxIdentification
         $moderate = $this->config['moderate'];
         $activationResourceId = $this->config['activationResourceId'] ?: 1;
         $userGroupsField = $this->config['usergroupsField'] ?: '';
-        $this->modx->user = $this->modx->getObject('modUser',1);
-        $userGroups = !empty($userGroupsField) && array_key_exists($userGroupsField, $_POST) ? $_POST[$userGroupsField] : explode(',',$this->config['usergroups']);
-        if($userGroups){
-            foreach($userGroups as $k => $group){
+        $this->modx->user = $this->modx->getObject('modUser', 1);
+        $userGroups = !empty($userGroupsField) && array_key_exists($userGroupsField, $_POST) ? $_POST[$userGroupsField] : explode(',', $this->config['usergroups']);
+        if ($userGroups) {
+            foreach ($userGroups as $k => $group) {
                 $group = explode(':', $group);
                 $_POST['groups'][] = array(
                     'usergroup' => $group[0],
@@ -40,7 +40,7 @@ class AjaxIdentification
                 );
             }
         }
-        if(!$_POST[$passwordField]){
+        if (!$_POST[$passwordField]) {
             $_POST[$passwordField] = $this->generateCode('pass', 10);
         }
         $_POST['passwordgenmethod'] = 'none';
@@ -51,11 +51,11 @@ class AjaxIdentification
         $_POST['username'] = $_POST[$usernameField];
         $_POST['passwordnotifymethod'] = 's';
 
-        if(!$activation){
+        if (!$activation) {
             $_POST['active'] = 1;
         }
 
-        if($moderate){
+        if ($moderate) {
             $_POST['blocked'] = 1;
         }
 
@@ -64,7 +64,7 @@ class AjaxIdentification
         if ($response->isError()) {
             $errors = $response->response['errors'];
             $errorMsg = array();
-            foreach($errors as $error){
+            foreach ($errors as $error) {
                 $errorMsg[] = $errors[0]['msg'];
             }
             $this->hook->addError('secret', implode('. ', $errorMsg));
@@ -73,7 +73,7 @@ class AjaxIdentification
             return false;
         }
 
-        $this->modx->user = $this->modx->getObject('modUser',$response->response['object']['id']);
+        $this->modx->user = $this->modx->getObject('modUser', $response->response['object']['id']);
 
         /* получаем ссылку для подтверждения почты */
         if ($activation && !empty($email) && !empty($activationResourceId)) {
@@ -114,18 +114,19 @@ class AjaxIdentification
         return true;
     }
 
-    public function update(){
-        if((int)$_POST['uid']){
+    public function update()
+    {
+        if ((int)$_POST['uid']) {
             $user = $this->modx->getObject('modUser', (int)$_POST['uid']);
-        }else{
+        } else {
             $user = $this->modx->user;
         }
 
-        if($this->modx->user->isAuthenticated($this->modx->context->get('key'))){
+        if ($this->modx->user->isAuthenticated($this->modx->context->get('key'))) {
             $profile = $user->getOne('Profile');
             $profileData = $profile->toArray();
             $extended = $this->prepareExtended() ?: array();
-            $_POST['extended'] = array_merge($profileData['extended'],$extended);
+            $_POST['extended'] = array_merge($profileData['extended'], $extended);
             $_POST['dob'] = $_POST['dob'] ? strtotime($_POST['dob']) : $profile->get('dob');
             $userData = $user->toArray();
             unset($userData['password']);
@@ -136,7 +137,7 @@ class AjaxIdentification
             $user->save();
             $profile->save();
 
-            $this->modx->invokeEvent('aiOnUserUpdate',array(
+            $this->modx->invokeEvent('aiOnUserUpdate', array(
                 'user' => $user,
                 'profile' => $profile,
                 'data' => $_POST
@@ -146,7 +147,8 @@ class AjaxIdentification
         return true;
     }
 
-    public function logout(){
+    public function logout()
+    {
         $contexts = $this->config['authenticateContexts'];
         $response = $this->modx->runProcessor('/security/logout', array(
             'login_context' => $this->modx->context->key,
@@ -160,12 +162,13 @@ class AjaxIdentification
         return true;
     }
 
-    public function forgot(){
+    public function forgot()
+    {
         $usernameField = $this->config['usernameField'] ?: 'username';
         $user = $this->modx->getObject('modUser', array('username' => $_POST[$usernameField]));
 
         if (is_object($user)) {
-            if(!$_POST['password']){
+            if (!$_POST['password']) {
                 $_POST['password'] = $this->generateCode();
                 $this->hook->setValue('password', $_POST['password']);
             }
@@ -237,20 +240,21 @@ class AjaxIdentification
         return $password;
     }
 
-    public function prepareExtended(){
+    public function prepareExtended()
+    {
         $extended = array();
         $extendedFieldPrefix = $this->config['extendedFieldPrefix'] ?: 'extended_';
 
-        foreach($_POST as $k => $v){
-            if(strpos($k, $extendedFieldPrefix) !== false){
-                $extended[str_replace($extendedFieldPrefix,'',$k)] = $v;
+        foreach ($_POST as $k => $v) {
+            if (strpos($k, $extendedFieldPrefix) !== false) {
+                $extended[str_replace($extendedFieldPrefix, '', $k)] = $v;
             }
         }
         return $extended;
     }
 
     /**
-     * @param  integer $activationResourceId
+     * @param integer $activationResourceId
      *
      * @return string
      */
@@ -272,7 +276,8 @@ class AjaxIdentification
      * @param string $str
      * @return string
      */
-    public function base64url_encode($str) {
+    public function base64url_encode($str)
+    {
         return rtrim(strtr(base64_encode($str), '+/', '-_'), '=');
     }
 
@@ -283,8 +288,41 @@ class AjaxIdentification
      * @param string $str
      * @return string
      */
-    public static function base64url_decode($str) {
+    public static function base64url_decode($str)
+    {
         return base64_decode(str_pad(strtr($str, '-_', '+/'), strlen($str) % 4, '=', STR_PAD_RIGHT));
     }
 
+
+    public function activateUser($str)
+    {
+        $username = $this->base64url_decode($_GET['lu']);
+        $userData = false;
+        if ($user = $this->modx->getObject('modUser', array('username' => $username))) {
+            $profile = $user->getOne('Profile');
+            $extended = $profile->get('extended');
+
+            if (!$user->get('active') && $extended['activate_before'] - time() <= 0) {
+                $user->remove();
+                return $userData;
+            }
+
+            $userData = array_merge($profile->toArray(), $user->toArray());
+
+            if ($extended['activate_before'] - time() > 0) {
+                $user->set('active', 1);
+                $user->save();
+                unset($extended['activate_before']);
+                $profile->set('extended', $extended);
+                $profile->save();
+            }
+
+            $this->modx->invokeEvent('OnUserActivate', array(
+                'user' => $user,
+                'profile' => $profile,
+                'data' => $userData
+            ));
+            return $userData;
+        }
+    }
 }
