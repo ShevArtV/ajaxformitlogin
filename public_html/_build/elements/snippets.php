@@ -49,10 +49,6 @@ return [
                 'type' => 'textfield',
                 'value' => 'email==Email',
             ],
-            'validate' => [
-                'type' => 'textfield',
-                'value' => 'email:required:email',
-            ],
             'showUploadProgress' => [
                 'type' => 'combo-boolean',
                 'value' => true,

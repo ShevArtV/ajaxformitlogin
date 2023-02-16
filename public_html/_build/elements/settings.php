@@ -30,5 +30,15 @@ return [
         'xtype' => 'textfield',
         'value' => '',
         'area' => 'default',
+    ],
+    'antispam_fieldname' => [
+        'xtype' => 'textfield',
+        'value' => 'aflsecret',
+        'area' => 'default',
+    ],
+    'antispam_js_event' => [
+        'xtype' => 'textfield',
+        'value' => 'mousemove',
+        'area' => 'default',
     ]
 ];

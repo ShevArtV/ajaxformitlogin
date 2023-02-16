@@ -12,6 +12,11 @@ $_lang['setting_ajaxformitlogin_metrics'] = 'Отправлять цели в Я
 $_lang['setting_ajaxformitlogin_metrics_desc'] = 'обязательно укажите идентификатор счётчика метрики.';
 $_lang['setting_ajaxformitlogin_counter_id'] = 'ID счётчика метрики.';
 $_lang['setting_ajaxformitlogin_counter_id_desc'] = 'обязательно укажите это значение, если хотите отправлять цели в метрику. не забудьте установить код счётчика на сайт.';
+$_lang['setting_ajaxformitlogin_antispam_fieldname'] = 'Имя поля для хранения ключа защиты от спама.';
+$_lang['setting_ajaxformitlogin_antispam_fieldname_desc'] = 'по умолчанию aflsecret, но может быть любым.';
+$_lang['setting_ajaxformitlogin_antispam_js_event'] = 'Имя JS события, по которому будет происходить вставка ключа защиты от спама.';
+$_lang['setting_ajaxformitlogin_antispam_js_event_desc'] = 'по умолчанию mousemove, но может быть любым событие документа.';
+
 
 $_lang['ajaxformitlogin_message_uploded_progress'] = 'Загружено: ';
 $_lang['ajaxformitlogin_message_uploded_success'] = 'Данные полностью загружены на сервер!';

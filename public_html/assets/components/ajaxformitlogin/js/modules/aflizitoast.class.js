@@ -2,7 +2,7 @@ import AflNotify from './aflnotify.class.js';
 
 export default class AflIziToast extends AflNotify {
     show(type, message) {
-        if (window[this.config.handlerClassName] && message) {
+        if (window[this.config.handlerClassName] && Boolean(message.trim())) {
             const options = Object.assign(this.config.handlerOptions, { title: message });
             try {
                 window[this.config.handlerClassName][type](options);

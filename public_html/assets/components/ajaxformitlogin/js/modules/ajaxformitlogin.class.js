@@ -25,7 +25,7 @@ export default class AjaxFormitLogin {
         }
 
         this.config = Object.assign({}, this.defaults, config);
-        this.antiSpamKeyInput = document.querySelectorAll('[name="secret"]');
+        this.antiSpamKeyInput = document.querySelectorAll('[name="' + this.config.antiSpamFieldName + '"]');
         this.requiredCheckboxes = this.form.querySelectorAll(this.config.requiredCheckboxesSelector);
         //console.log(config);
         this.initialize();
@@ -50,7 +50,7 @@ export default class AjaxFormitLogin {
         }
 
         if (this.antiSpamKeyInput.length) {
-            document.addEventListener('mousemove', this.insertAntiSpamKey.bind(this), {once: true});
+            document.addEventListener(this.config.antiSpamJsEvent, this.insertAntiSpamKey.bind(this), {once: true});
         }
     }
 
@@ -155,7 +155,7 @@ export default class AjaxFormitLogin {
             if (requiredCheckbox) {
                 elem.value = 0;
             }
-            if(form.querySelector('.error_' + elem.name)){
+            if (form.querySelector('.error_' + elem.name)) {
                 form.querySelector('.error_' + elem.name).innerHTML = '';
             }
         }
@@ -230,9 +230,9 @@ export default class AjaxFormitLogin {
             this.Notify.success(response.message);
         }
 
-        if(response.data.ym_goal && this.config.metrics && this.config.counterId && typeof window.ym !== 'undefined'){
+        if (response.data.ym_goal && this.config.metrics && this.config.counterId && typeof window.ym !== 'undefined') {
             const addData = form.id || this.config.pageId;
-            ym(this.config.counterId, 'reachGoal', response.data.ym_goal, {'form' : addData});
+            ym(this.config.counterId, 'reachGoal', response.data.ym_goal, {'form': addData});
         }
 
         if (response.data.redirectUrl) {
@@ -254,12 +254,13 @@ export default class AjaxFormitLogin {
     // handler server error response
     onError(response, form) {
         const aliases = {};
-        if(response.data.aliases){
+        if (response.data.aliases) {
             let tmp = response.data.aliases.split(',');
-            for(let k in tmp) {
+            for (let k in tmp) {
                 let kv = tmp[k].split('==');
                 aliases[kv[0]] = kv[1];
-            };
+            }
+            ;
         }
         if (response.data.errors) {
             let key, value, focused;
@@ -275,12 +276,12 @@ export default class AjaxFormitLogin {
                         if (span) {
                             span.innerHTML = value;
                             span.classList.add('error');
-                        }else{
+                        } else {
                             if (this.Notify !== undefined) {
-                                if(aliases[key]){
-                                    this.Notify.error(aliases[key] +': '+ response.data.errors[key]);
-                                }else{
-                                    this.Notify.error(key + ': ' + response.data.errors[key]);
+                                if (aliases[key]) {
+                                    this.Notify.error(aliases[key] + ': ' + response.data.errors[key]);
+                                } else {
+                                    this.Notify.error(response.data.errors[key]);
                                 }
                             }
                         }
@@ -327,3 +328,4 @@ export default class AjaxFormitLogin {
         }
     }
 }
+

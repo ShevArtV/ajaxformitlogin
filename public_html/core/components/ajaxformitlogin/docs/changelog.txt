@@ -2,6 +2,8 @@
 ==============
 - Code of the ActivateUser snippet has been moved to the class ajaxidentification.class.php
 - Added initialization of the OnUserActivate event.
+- Added system settings ajaxformitlogin_antispam_js_event and ajaxformitlogin_antispam_fieldname
+- Removed default parameter validate for snippet AjaxFormItLogin
 
 1.0.6-pl
 ==============

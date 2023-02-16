@@ -41,6 +41,7 @@ class AjaxFormitLogin
             'frontend_js' => $this->modx->getOption('ajaxformitlogin_frontend_js', '', '[[+assetsUrl]]js/default.js'),
             'notifyClassPath' => $this->modx->getOption('ajaxformitlogin_notify_classpath', '', './aflizitoast.class.js'),
             'notifyClassName' => $this->modx->getOption('ajaxformitlogin_notify_classname', '', 'AflIziToast'),
+            'antiSpamFieldName' => $this->modx->getOption('ajaxformitlogin_antispam_fieldname', '', 'aflsecret'),
         ), $config);
 
         $this->config['formSelector'] = $this->config['formSelector'] . '_' . rand();
@@ -115,9 +116,9 @@ class AjaxFormitLogin
             $scriptProperties = array_merge($properties, $property_set, $scriptProperties);
             if ($scriptProperties['spamProtection']) {
                 if ($scriptProperties['validate']) {
-                    $scriptProperties['validate'] .= ',secret:contains=^' . $scriptProperties['secret'] . '^';
+                    $scriptProperties['validate'] .= ','.$this->config['antiSpamFieldName'].':contains=^' . $scriptProperties[$this->config['antiSpamFieldName']] . '^';
                 } else {
-                    $scriptProperties['validate'] .= 'secret:contains=^' . $scriptProperties['secret'] . '^';
+                    $scriptProperties['validate'] .= $this->config['antiSpamFieldName'].':contains=^' . $scriptProperties[$this->config['antiSpamFieldName']] . '^';
                 }
             }
             $snippet->_cacheable = false;

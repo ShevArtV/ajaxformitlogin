@@ -34,13 +34,16 @@ if(!function_exists('generateRandString')){
     }
 }
 
-$scriptProperties['secret'] = generateRandString($modx);
-$scriptProperties['secret.vTextContains'] = $scriptProperties['secret.vTextContains'] ?: 'Кажется Вы робот. Если это не так, обновите страницу.';
 $AjaxFormitLogin = new AjaxFormitLogin($modx, $scriptProperties);
 $config = $AjaxFormitLogin->config;
+
+$scriptProperties[$config['antiSpamFieldName']] = generateRandString($modx);
+$scriptProperties[$config['antiSpamFieldName'].'.vTextContains'] = $scriptProperties['secret.vTextContains'] ?: 'Кажется Вы робот. Если это не так, обновите страницу.';
+
 $config['pageId'] = $modx->resource->id;
 $config['metrics'] = $modx->getOption('ajaxformitlogin_metrics' , null, '');
 $config['counterId'] = $modx->getOption('ajaxformitlogin_counter_id' , null, '');
+$config['antiSpamJsEvent'] = $modx->getOption('ajaxformitlogin_antispam_js_event' , null, 'mousemove');
 $frontConfigFields = [
     'formSelector',
     'showUploadProgress',
@@ -57,7 +60,9 @@ $frontConfigFields = [
     'notifyClassPath',
     'spamProtection',
     'metrics',
-    'counterId'
+    'counterId',
+    'antiSpamFieldName',
+    'antiSpamJsEvent'
 ];
 
 $assetsUrl = $modx->getOption('ajaxformitlogin_assets_url', $config, $modx->getOption('assets_url') . 'components/ajaxformitlogin/');
@@ -115,7 +120,7 @@ if (preg_match('#<form.*?method=(?:"|\')(.*?)(?:"|\')#i', $content)) {
 // Add action for form processing
 $hash = md5(http_build_query($config));
 $action = '<input type="hidden" name="afl_action" value="' . $hash . '" />';
-$secret = '<input type="text" name="secret" data-secret="'.$scriptProperties['secret'].'" style="position: absolute;opacity:0;z-index: -1;width:0;" autocomplete="off">';
+$secret = '<input type="text" name="'.$config['antiSpamFieldName'].'" data-'.$config['antiSpamFieldName'].'="'.$scriptProperties[$config['antiSpamFieldName']].'" style="position: absolute;opacity:0;z-index: -1;width:0;" autocomplete="off">';
 $inputConfig = '<input type="hidden" name="afl_config" value=\'' . str_replace('{', '{ ',json_encode($frontendConfig)) . '\' />';
 
 if ((stripos($content, '</form>') !== false)) {

@@ -5,6 +5,10 @@ return [
         'file' => 'emails/activateEmail',
         'description' => 'пример чанка письма со ссылкой на активацию',
     ],
+    'aflResetPassEmail' => [
+        'file' => 'emails/resetPassEmail.tpl',
+        'description' => 'пример чанка письма восстановления пароля',
+    ],
     'aflExampleEmail' => [
         'file' => 'emails/exampleEmail',
         'description' => 'пример чанка письма',
