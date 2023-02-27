@@ -56,7 +56,7 @@ export default class AjaxFormitLogin {
 
     insertAntiSpamKey() {
         this.antiSpamKeyInput.forEach(el => {
-            el.value = el.dataset.secret;
+            el.value = el.dataset[this.config.antiSpamFieldName];
         });
     }
 
