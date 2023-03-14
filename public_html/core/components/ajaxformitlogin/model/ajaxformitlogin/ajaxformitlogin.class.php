@@ -147,7 +147,6 @@ class AjaxFormitLogin
     {
         $plPrefix = $scriptProperties['placeholderPrefix'] ?? 'fi.';
         $data = array();
-
         foreach ($scriptProperties['fields'] as $k => $v) {
             if (isset($this->modx->placeholders[$plPrefix . 'error.' . $k])) {
                 $data['errors'][$k] = strip_tags($this->modx->placeholders[$plPrefix . 'error.' . $k]);

@@ -43,7 +43,7 @@ return [
             ],
             'transmittedParams' => [
                 'type' => 'textfield',
-                'value' => '["success" => "", "error" => "aliases"]',
+                'value' => '{"success" : "", "error" : "aliases"}',
             ],
             'aliases' => [
                 'type' => 'textfield',
@@ -91,11 +91,6 @@ return [
     'aflRequiredIf' => [
         'file' => 'validators/validator.requiredif',
         'description' => 'валидатор обязательности ввода по условию',
-        'properties' => [],
-    ],
-    'aflUserExists' => [
-        'file' => 'validators/validator.userexists',
-        'description' => 'валидатор существования пользователя',
         'properties' => [],
     ],
     'aflUserNotExists' => [

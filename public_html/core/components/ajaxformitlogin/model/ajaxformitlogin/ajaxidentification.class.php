@@ -13,6 +13,7 @@ class AjaxIdentification
         $this->modx = $modx;
         $this->config = $config;
         $this->hook = $hook;
+        $this->values = $hook->getValues();
     }
 
 
@@ -21,54 +22,56 @@ class AjaxIdentification
      */
     public function register()
     {
-        $email = $_POST['email'];
+        $email = $this->values['email'];
+
         $passwordField = $this->config['passwordField'] ?: 'password';
         $usernameField = $this->config['usernameField'] ?: 'username';
+
         $activation = $this->config['activation'];
         $moderate = $this->config['moderate'];
         $activationResourceId = $this->config['activationResourceId'] ?: 1;
         $userGroupsField = $this->config['usergroupsField'] ?: '';
         $this->modx->user = $this->modx->getObject('modUser', 1);
-        $userGroups = !empty($userGroupsField) && array_key_exists($userGroupsField, $_POST) ? $_POST[$userGroupsField] : explode(',', $this->config['usergroups']);
+        $userGroups = !empty($userGroupsField) && array_key_exists($userGroupsField, $this->values) ? $this->values[$userGroupsField] : explode(',', $this->config['usergroups']);
         if ($userGroups) {
             foreach ($userGroups as $k => $group) {
                 $group = explode(':', $group);
-                $_POST['groups'][] = array(
+                $this->values['groups'][] = array(
                     'usergroup' => $group[0],
                     'role' => $group[1] ?: 1,
                     'rank' => $group[2] ?: $k,
                 );
             }
         }
-        if (!$_POST[$passwordField]) {
-            $_POST[$passwordField] = $this->generateCode('pass', 10);
+        if (!$this->values[$passwordField]) {
+            $this->values[$passwordField] = $this->generateCode('pass', 10);
         }
-        $_POST['passwordgenmethod'] = 'none';
-        $_POST['specifiedpassword'] = $_POST[$passwordField];
-        $this->hook->setValue('password', $_POST[$passwordField]);
-        $this->hook->setValue('username', $_POST[$usernameField]);
-        $_POST['confirmpassword'] = $_POST[$passwordField];
-        $_POST['username'] = $_POST[$usernameField];
-        $_POST['passwordnotifymethod'] = 's';
+        $this->values['passwordgenmethod'] = 'none';
+        $this->values['specifiedpassword'] = $this->values[$passwordField];
+        $this->hook->setValue('password', $this->values[$passwordField]);
+        $this->hook->setValue('username', $this->values[$usernameField]);
+        $this->values['confirmpassword'] = $this->values[$passwordField];
+        $this->values['username'] = $this->values[$usernameField];
+        $this->values['passwordnotifymethod'] = 's';
 
         if (!$activation) {
-            $_POST['active'] = 1;
+            $this->values['active'] = 1;
         }
 
         if ($moderate) {
-            $_POST['blocked'] = 1;
+            $this->values['blocked'] = 1;
         }
 
-        $_POST['extended'] = $this->prepareExtended();
-        $response = $this->modx->runProcessor('/security/user/create', $_POST);
-        if ($response->isError()) {
-            $errors = $response->response['errors'];
-            $errorMsg = array();
-            foreach ($errors as $error) {
-                $errorMsg[] = $errors[0]['msg'];
+        $this->values['extended'] = $this->prepareExtended();
+        $response = $this->modx->runProcessor('/security/user/create', $this->values);
+
+        if($errors = $response->getFieldErrors()){
+            foreach($errors as $error){
+                $key = $error->getField();
+                if($error->getField() === 'username') $key = $usernameField;
+                if($error->getField() === 'password') $key = $passwordField;
+                $this->hook->addError($key,$error->getMessage());
             }
-            $this->hook->addError('secret', implode('. ', $errorMsg));
-            $this->hook->hasErrors();
             $this->modx->user = null;
             return false;
         }
@@ -93,31 +96,31 @@ class AjaxIdentification
         $passwordField = $this->config['passwordField'] ?: 'password';
         $usernameField = $this->config['usernameField'] ?: 'username';
 
-        if (!$_POST[$usernameField] || !$_POST[$passwordField]) {
+        if (!$this->values[$usernameField] || !$this->values[$passwordField]) {
             return false;
         }
 
         $c = array(
             'login_context' => $this->modx->context->key,
             'add_contexts' => $contexts,
-            'username' => $_POST[$usernameField],
-            'password' => $_POST[$passwordField],
-            'rememberme' => $_POST['rememberme'],
+            'username' => $this->values[$usernameField],
+            'password' => $this->values[$passwordField],
+            'rememberme' => $this->values['rememberme'],
         );
 
         $response = $this->modx->runProcessor('/security/login', $c);
 
         if ($response->isError()) {
-            $this->hook->addError('secret', $response->getMessage());
-            $this->hook->hasErrors();
+            $this->hook->addError($this->config['antiSpamFieldName'], $response->getMessage());
+            return false;
         }
         return true;
     }
 
     public function update()
     {
-        if ((int)$_POST['uid']) {
-            $user = $this->modx->getObject('modUser', (int)$_POST['uid']);
+        if ((int)$this->values['uid']) {
+            $user = $this->modx->getObject('modUser', (int)$this->values['uid']);
         } else {
             $user = $this->modx->user;
         }
@@ -126,21 +129,21 @@ class AjaxIdentification
             $profile = $user->getOne('Profile');
             $profileData = $profile->toArray();
             $extended = $this->prepareExtended() ?: array();
-            $_POST['extended'] = array_merge($profileData['extended'], $extended);
-            $_POST['dob'] = $_POST['dob'] ? strtotime($_POST['dob']) : $profile->get('dob');
+            $this->values['extended'] = array_merge($profileData['extended'], $extended);
+            $this->values['dob'] = $this->values['dob'] ? strtotime($this->values['dob']) : $profile->get('dob');
             $userData = $user->toArray();
             unset($userData['password']);
             unset($userData['cachepwd']);
 
-            $user->fromArray(array_merge($userData, $_POST));
-            $profile->fromArray(array_merge($profileData, $_POST));
+            $user->fromArray(array_merge($userData, $this->values));
+            $profile->fromArray(array_merge($profileData, $this->values));
             $user->save();
             $profile->save();
 
             $this->modx->invokeEvent('aiOnUserUpdate', array(
                 'user' => $user,
                 'profile' => $profile,
-                'data' => $_POST
+                'data' => $this->values
             ));
 
         }
@@ -156,7 +159,7 @@ class AjaxIdentification
         ));
 
         if ($response->isError()) {
-            $this->hook->addError('secret', $response->getMessage());
+            $this->hook->addError($this->config['antiSpamFieldName'], $response->getMessage());
             $this->hook->hasErrors();
         }
         return true;
@@ -165,15 +168,15 @@ class AjaxIdentification
     public function forgot()
     {
         $usernameField = $this->config['usernameField'] ?: 'username';
-        $user = $this->modx->getObject('modUser', array('username' => $_POST[$usernameField]));
+        $user = $this->modx->getObject('modUser', array('username' => $this->values[$usernameField]));
 
         if (is_object($user)) {
-            if (!$_POST['password']) {
-                $_POST['password'] = $this->generateCode();
-                $this->hook->setValue('password', $_POST['password']);
+            if (!$this->values['password']) {
+                $this->values['password'] = $this->generateCode();
+                $this->hook->setValue('password', $this->values['password']);
             }
 
-            $user->set('password', $_POST['password']);
+            $user->set('password', $this->values['password']);
             $user->save();
 
             if ($this->config['autoLogin'] == true && $user->get('active') && !$user->get('block')) {
@@ -245,7 +248,7 @@ class AjaxIdentification
         $extended = array();
         $extendedFieldPrefix = $this->config['extendedFieldPrefix'] ?: 'extended_';
 
-        foreach ($_POST as $k => $v) {
+        foreach ($this->values as $k => $v) {
             if (strpos($k, $extendedFieldPrefix) !== false) {
                 $extended[str_replace($extendedFieldPrefix, '', $k)] = $v;
             }
@@ -294,11 +297,10 @@ class AjaxIdentification
     }
 
 
-    public function activateUser($str)
+    public static function activateUser($username, $modx)
     {
-        $username = $this->base64url_decode($_GET['lu']);
         $userData = false;
-        if ($user = $this->modx->getObject('modUser', array('username' => $username))) {
+        if ($user = $modx->getObject('modUser', array('username' => $username))) {
             $profile = $user->getOne('Profile');
             $extended = $profile->get('extended');
 
@@ -317,7 +319,7 @@ class AjaxIdentification
                 $profile->save();
             }
 
-            $this->modx->invokeEvent('OnUserActivate', array(
+            $modx->invokeEvent('OnUserActivate', array(
                 'user' => $user,
                 'profile' => $profile,
                 'data' => $userData

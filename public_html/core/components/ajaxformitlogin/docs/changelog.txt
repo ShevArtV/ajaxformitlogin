@@ -1,3 +1,9 @@
+1.0.9-pl
+==============
+- Fixed a bug with user activation
+- Fixed a bug with wrong notify on failed authorization
+- Removed validator UserExists
+
 1.0.8-pl
 ==============
 - Fixed a bug with authorization
