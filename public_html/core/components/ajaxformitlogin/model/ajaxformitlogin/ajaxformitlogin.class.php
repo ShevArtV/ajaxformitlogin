@@ -15,12 +15,10 @@ class AjaxFormitLogin
     function __construct(modX &$modx, array $config = array())
     {
         $this->modx =& $modx;
-
         $corePath = $this->modx->getOption('core_path') . 'components/ajaxformitlogin/';
         $assetsUrl = $this->modx->getOption('assets_url') . 'components/ajaxformitlogin/';
 
         $this->modx->lexicon->load('ajaxformitlogin:default');
-
 
         $this->config = array_merge(array(
             'corePath' => $corePath,
@@ -34,8 +32,6 @@ class AjaxFormitLogin
             'fileUplodedSuccessMsg' => $this->modx->lexicon('ajaxformitlogin_message_uploded_success'),
             'fileUplodedErrorMsg' => $this->modx->lexicon('ajaxformitlogin_message_uploded_error'),
             'ajaxErrorMsg' => $this->modx->lexicon('ajaxformitlogin_message_ajax_error'),
-
-
 
             'notifySettingsPath' => $this->modx->getOption('ajaxformitlogin_notify_js', '', 'assets/components/ajaxformitlogin/js/message_settings.json'),
             'frontend_js' => $this->modx->getOption('ajaxformitlogin_frontend_js', '', '[[+assetsUrl]]js/default.js'),
@@ -174,6 +170,8 @@ class AjaxFormitLogin
                     $data[$key] = $scriptProperties[$key];
                 }
             }
+
+            /* будет удалён в будущих версиях */
             $data['redirectTimeout'] = $scriptProperties['redirectTimeout'] ?: 2000;
             $data['redirectUrl'] = $scriptProperties['redirectTo'];
             if ((int)$scriptProperties['redirectTo']) {
@@ -183,6 +181,14 @@ class AjaxFormitLogin
         }
 
         return $this->$status($message, $data);
+    }
+
+    public function getRedirectUrl($redirectTo){
+        $redirectUrl = $redirectTo;
+        if ((int)$redirectTo) {
+            $redirectUrl = $this->modx->makeUrl($redirectTo, '', '', 'full');
+        }
+        return $redirectUrl;
     }
 
 

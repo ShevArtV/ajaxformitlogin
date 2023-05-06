@@ -235,10 +235,12 @@ export default class AjaxFormitLogin {
             ym(this.config.counterId, 'reachGoal', response.data.ym_goal, {'form': addData});
         }
 
-        if (response.data.redirectUrl) {
+        const redirectUrl = response.data.redirectUrl || this.config.redirectUrl;
+        const redirectTimeout = response.data.redirectTimeout || this.config.redirectTimeout;
+        if (redirectUrl) {
             setTimeout(() => {
-                window.location.href = response.data.redirectUrl;
-            }, response.data.redirectTimeout);
+                window.location.href = redirectUrl;
+            }, redirectTimeout);
         }
 
         form.querySelectorAll('.error').forEach(el => {

@@ -1,3 +1,8 @@
+1.0.10-pl
+==============
+- Аdded support for old metrica counters
+- Fixed a bug with session clogging
+
 1.0.9-pl
 ==============
 - Fixed a bug with user activation

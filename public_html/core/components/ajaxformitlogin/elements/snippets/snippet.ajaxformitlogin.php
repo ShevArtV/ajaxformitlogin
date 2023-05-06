@@ -1,5 +1,4 @@
 <?php
-
 /** @var array $scriptProperties */
 /** @var AjaxFormitLogin $AjaxFormitLogin */
 if (!$modx->loadClass('ajaxformitlogin', MODX_CORE_PATH . 'components/ajaxformitlogin/model/ajaxformitlogin/', false, true)) {
@@ -44,6 +43,8 @@ $config['pageId'] = $modx->resource->id;
 $config['metrics'] = $modx->getOption('ajaxformitlogin_metrics' , null, '');
 $config['counterId'] = $modx->getOption('ajaxformitlogin_counter_id' , null, '');
 $config['antiSpamJsEvent'] = $modx->getOption('ajaxformitlogin_antispam_js_event' , null, 'mousemove');
+$config['redirectUrl'] = $AjaxFormitLogin->getRedirectUrl($scriptProperties['redirectTo']);
+
 $frontConfigFields = [
     'formSelector',
     'showUploadProgress',
@@ -62,7 +63,9 @@ $frontConfigFields = [
     'metrics',
     'counterId',
     'antiSpamFieldName',
-    'antiSpamJsEvent'
+    'antiSpamJsEvent',
+    'redirectUrl',
+    'redirectTimeout'
 ];
 
 $assetsUrl = $modx->getOption('ajaxformitlogin_assets_url', $config, $modx->getOption('assets_url') . 'components/ajaxformitlogin/');
@@ -118,6 +121,7 @@ if (preg_match('#<form.*?method=(?:"|\')(.*?)(?:"|\')#i', $content)) {
 }
 
 // Add action for form processing
+unset($config['formSelector']);
 $hash = md5(http_build_query($config));
 $action = '<input type="hidden" name="afl_action" value="' . $hash . '" />';
 $secret = '<input type="text" name="'.$config['antiSpamFieldName'].'" data-'.$config['antiSpamFieldName'].'="'.$scriptProperties[$config['antiSpamFieldName']].'" style="position: absolute;opacity:0;z-index: -1;width:0;" autocomplete="off">';
@@ -136,6 +140,7 @@ if ((stripos($content, '</form>') !== false)) {
 }
 
 // Save settings to user`s session
+$config['formSelector'] = $formSelector;
 $_SESSION['AjaxFormitLogin'][$hash] = $config;
 
 // Call snippet for preparation of form
